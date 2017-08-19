@@ -18,7 +18,7 @@ meta:
 	ADDON_NAME = ofxLibFreenect2
 	ADDON_DESCRIPTION = Addon for interfacing with microsoft kinect2 cameras using open source drivers
 	ADDON_AUTHOR = Pierre Proske
-	ADDON_TAGS = "computer vision" "3D sensing" "kinect"
+	ADDON_TAGS = "computer vision" "3D sensing" "kinect" "kinectv2" "libfreenect" "libfreenect2"
 	ADDON_URL = http://github.com/pierrep/ofxLibFreenect
 
 common:

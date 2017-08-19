@@ -1,2 +1,2 @@
-ofxLibfreenect2
+ofxLibFreenect2
 ofxOpenCv

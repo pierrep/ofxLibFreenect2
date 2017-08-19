@@ -12,13 +12,13 @@ Project{
         name: { return FileInfo.baseName(path) }
 
         files: [
-            "src/main.cpp",
-            "src/ofApp.cpp",
-            "src/ofApp.h",
+            'src/main.cpp',
+            'src/ofApp.cpp',
+            'src/ofApp.h',
         ]
 
         of.addons: [
-            'ofxLibfreenect2',
+            'ofxLibFreenect2',
             'ofxOpenCv',
         ]
 
@@ -37,7 +37,6 @@ Project{
         // eg: this will enable ccache when compiling
         //
         // cpp.compilerWrapper: 'ccache'
-        cpp.dynamicLibraries : ["freenect2"]
 
         Depends{
             name: "cpp"

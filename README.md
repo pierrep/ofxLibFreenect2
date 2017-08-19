@@ -1,5 +1,11 @@
-# ofxLibFreenect2
-Kinect V2 addon using the libfreenect2 library
+ofxLibFreenect2
+===============
+
+
+Description
+-----------
+
+This is an OpenFrameworks addon for Kinect V2 using the libfreenect2 library:
 
 https://github.com/OpenKinect/libfreenect2
 
@@ -11,9 +17,11 @@ This currently only uses the OpenCL backend, so make sure that is enabled.
 
 I've tried to model it as close to the original ofxKinect as possible, to make it an easy drop in replacement. Point clouds are not currently included. There's the potential to hook this up with OpenNI and NITE but I haven't tried that yet.
 
-Build Instructions
 
-Linux
+Build Instructions
+------------------
+
+### Linux
 
 
 - Build libfreenect2 by following the instructions [here](https://github.com/OpenKinect/libfreenect2#linux) except that instead of launching the command:

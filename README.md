@@ -36,7 +36,6 @@ cmake -DBUILD_SHARED_LIBS=OFF
 ```bash
 cd ofxLibFreenect2
 cp /usr/local/lib/libfreenect2.a libs/libfreenect2/lib/linux64
-cd example/ofxLibFreenect2Example
 ```
 
 

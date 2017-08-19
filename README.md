@@ -9,7 +9,7 @@ This is an OpenFrameworks addon for Kinect V2 using the libfreenect2 library:
 
 https://github.com/OpenKinect/libfreenect2
 
-Install libfreenect2 from above URL and link to the dynamic (or static) lib.
+Install libfreenect2 from above URL and link to the static (or dynamic) lib.
 
 Tested under Linux but should work on all platforms
 

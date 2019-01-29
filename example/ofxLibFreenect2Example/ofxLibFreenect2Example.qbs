@@ -38,6 +38,8 @@ Project{
         //
         // cpp.compilerWrapper: 'ccache'
 
+        cpp.dynamicLibraries : ["jpeg"]
+
         Depends{
             name: "cpp"
         }

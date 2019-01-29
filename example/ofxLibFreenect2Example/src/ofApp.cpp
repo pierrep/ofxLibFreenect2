@@ -100,8 +100,8 @@ void ofApp::draw() {
 		easyCam.end();
 	} else {
 		// draw from the live kinect
-        //kinect.drawDepth(10, 10, 400, 300);
-        //kinect.draw(420, 10, 400, 300);
+        kinect.drawDepth(10, 10, 400, 300);
+        kinect.draw(420, 10, 400, 300);
 		
         grayImage.draw(10, 320, 400, 300);
 		contourFinder.draw(10, 320, 400, 300);

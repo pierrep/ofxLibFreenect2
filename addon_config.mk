@@ -73,7 +73,7 @@ linux64:
 	# linux only, any library that should be included in the project using
 	# pkg-config
 	ADDON_PKG_CONFIG_LIBRARIES = libusb-1.0
-	ADDON_LDFLAGS = -lOpenCL -lturbojpeg -lva -lva-drm 
+        ADDON_LDFLAGS = -lOpenCL -lturbojpeg -lva -lva-drm -ljpeg
 	#-lfreenect2
 
 	

@@ -70,6 +70,9 @@ bool ofxLibfreenect2::init(bool texture) {
         pipeline = new libfreenect2::OpenCLPacketPipeline();
 	}
 
+    libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::Warning);
+    libfreenect2::setGlobalLogger(logger);
+
 	bGrabberInited = true;
 
 	return bGrabberInited;

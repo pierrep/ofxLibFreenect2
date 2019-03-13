@@ -247,7 +247,9 @@ bool ofxLibfreenect2::isUsingTexture() const{
 //----------------------------------------------------------
 void ofxLibfreenect2::draw(float _x, float _y, float _w, float _h) const{
 	if(bUseTexture) {
-		videoTex.draw(_x, _y, _w, _h);
+        if(videoTex.isAllocated()) {
+            videoTex.draw(_x, _y, _w, _h);
+        }
 	}
 }
 
@@ -259,7 +261,9 @@ void ofxLibfreenect2::draw(float _x, float _y) const{
 //----------------------------------------------------------
 void ofxLibfreenect2::drawDepth(float _x, float _y, float _w, float _h) const{
 	if(bUseTexture) {
-		depthTex.draw(_x, _y, _w, _h);
+        if(depthTex.isAllocated()) {
+            depthTex.draw(_x, _y, _w, _h);
+        }
 	}
 }
 

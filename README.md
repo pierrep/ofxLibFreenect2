@@ -40,7 +40,7 @@ cp /usr/local/lib/libfreenect2.a libs/libfreenect2/lib/linux64
 
 ### Dependencies
 
-Under Ubuntu 18.04 you'll need to install:
+Under Ubuntu 18.04 if you have an Intel iGPU you'll need to install:
 
 ```
 sudo apt install libva-dev

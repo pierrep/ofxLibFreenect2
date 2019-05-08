@@ -36,13 +36,14 @@ cmake -DBUILD_SHARED_LIBS=OFF
 ```bash
 cd ofxLibFreenect2
 cp /usr/local/lib/libfreenect2.a libs/libfreenect2/lib/linux64
-
+```
 
 ### Dependencies
 
 Under Ubuntu 18.04 you'll need to install:
 
-```sudo apt install libva-dev
+```
+sudo apt install libva-dev
 sudo apt install libturbojpeg0-dev 
 
 ``` 

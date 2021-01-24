@@ -1,3 +1,5 @@
 example/.vs
 example/bin/example_debug
 example/build/
+ofxLibFreenect2Example.qbs.user
+

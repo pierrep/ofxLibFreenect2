@@ -44,7 +44,7 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    ofSetWindowTitle(ofToString(ofGetFrameRate()));
+    ofSetWindowTitle("Fps: "+ofToString(ofGetFrameRate()));
 	ofBackground(100, 100, 100);
 	
 	kinect.update();
@@ -104,8 +104,8 @@ void ofApp::draw() {
         kinect.drawDepth(10, 10, imgW, ratio*imgW);
         kinect.draw(imgW+20, 10, imgW, ratio*imgW);
 		
-        grayImage.draw(10, ratio*imgW+10, imgW, ratio*imgW);
-        contourFinder.draw(10, ratio*imgW+10, imgW, ratio*imgW);
+        grayImage.draw(10, ratio*imgW+20, imgW, ratio*imgW);
+        contourFinder.draw(10, ratio*imgW+20, imgW, ratio*imgW);
 		
 	}
 	

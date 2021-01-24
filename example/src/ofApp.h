@@ -26,13 +26,13 @@ public:
     ofxLibfreenect2 kinect;
 	
 	
-	ofxCvColorImage colorImg;
+    ofxCvColorImage colorImg;
 	
-	ofxCvGrayscaleImage grayImage; // grayscale depth image
-	ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
-	ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
+    ofxCvGrayscaleImage grayImage; // grayscale depth image
+    ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
+    ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
 	
-	ofxCvContourFinder contourFinder;
+    ofxCvContourFinder contourFinder;
 	
 	bool bThreshWithOpenCV;
 	bool bDrawPointCloud;
@@ -44,4 +44,5 @@ public:
 	
 	// used for viewing the point cloud
 	ofEasyCam easyCam;
+    ofMesh mesh;
 };

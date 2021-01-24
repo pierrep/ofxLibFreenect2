@@ -8,13 +8,14 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
-	
+    //ofSetVerticalSync(false);
+
 	// enable depth->video image calibration
-//	kinect.setRegistration(true);
+    kinect.setRegistration(true);
     
-	kinect.init();
-	//kinect.init(true); // shows infrared instead of RGB video image
-	//kinect.init(false, false); // disable video image (faster fps)
+    kinect.init();
+    //kinect.init(true); // shows infrared instead of RGB video image
+    //kinect.init(false, false); // disable video image (faster fps)
 	
 	kinect.open();		// opens first available kinect
 	//kinect.open(1);	// open a kinect by id, starting with 0 (sorted by serial # lexicographically))
@@ -35,55 +36,52 @@ void ofApp::setup() {
 	
 	nearThreshold = 230;
 	farThreshold = 70;
-	bThreshWithOpenCV = true;
-	
-	ofSetFrameRate(60);
-	
+	bThreshWithOpenCV = true;	
 	
 	// start from the front
-	bDrawPointCloud = false;
+    bDrawPointCloud = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-	
+    ofSetWindowTitle(ofToString(ofGetFrameRate()));
 	ofBackground(100, 100, 100);
 	
 	kinect.update();
 	
 	// there is a new frame and we are connected
-	if(kinect.isFrameNew()) {
+	if(kinect.isFrameNew()) {        
+
+        // load grayscale depth image from the kinect source
+        grayImage.setFromPixels(kinect.getDepthPixels());
 		
-		// load grayscale depth image from the kinect source
-		grayImage.setFromPixels(kinect.getDepthPixels());
-		
-		// we do two thresholds - one for the far plane and one for the near plane
-		// we then do a cvAnd to get the pixels which are a union of the two thresholds
-		if(bThreshWithOpenCV) {
-			grayThreshNear = grayImage;
-			grayThreshFar = grayImage;
-			grayThreshNear.threshold(nearThreshold, true);
-			grayThreshFar.threshold(farThreshold);
-			cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
-		} else {
+        // we do two thresholds - one for the far plane and one for the near plane
+        // we then do a cvAnd to get the pixels which are a union of the two thresholds
+        if(bThreshWithOpenCV) {
+            grayThreshNear = grayImage;
+            grayThreshFar = grayImage;
+            grayThreshNear.threshold(nearThreshold, true);
+            grayThreshFar.threshold(farThreshold);
+            cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
+        } else {
 			
-			// or we do it ourselves - show people how they can work with the pixels
-			ofPixels & pix = grayImage.getPixels();
-			int numPixels = pix.size();
-			for(int i = 0; i < numPixels; i++) {
-				if(pix[i] < nearThreshold && pix[i] > farThreshold) {
-					pix[i] = 255;
-				} else {
-					pix[i] = 0;
-				}
-			}
-		}
+            // or we do it ourselves - show people how they can work with the pixels
+            ofPixels & pix = grayImage.getPixels();
+            int numPixels = pix.size();
+            for(int i = 0; i < numPixels; i++) {
+                if(pix[i] < nearThreshold && pix[i] > farThreshold) {
+                    pix[i] = 255;
+                } else {
+                    pix[i] = 0;
+                }
+            }
+        }
 		
-		// update the cv images
-		grayImage.flagImageChanged();
+        // update the cv images
+        grayImage.flagImageChanged();
 		
-		// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
-		// also, find holes is set to true so we will get interior contours as well....
+        // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
+        // also, find holes is set to true so we will get interior contours as well....
         contourFinder.findContours(grayImage, 100, (kinect.depthWidth*kinect.depthHeight)/2, 20, false);
 	}
 	
@@ -91,20 +89,23 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	
+
 	ofSetColor(255, 255, 255);
 	
-	if(bDrawPointCloud) {
-		easyCam.begin();
+    if(bDrawPointCloud) {
+        easyCam.begin();
 		drawPointCloud();
-		easyCam.end();
+        easyCam.end();
 	} else {
 		// draw from the live kinect
-        kinect.drawDepth(10, 10, 400, 300);
-        kinect.draw(420, 10, 400, 300);
+        float ratio = (float)kinect.height/(float)kinect.width;
+        int imgW = 450;
+
+        kinect.drawDepth(10, 10, imgW, ratio*imgW);
+        kinect.draw(imgW+20, 10, imgW, ratio*imgW);
 		
-        grayImage.draw(10, 320, 400, 300);
-		contourFinder.draw(10, 320, 400, 300);
+        grayImage.draw(10, ratio*imgW+10, imgW, ratio*imgW);
+        contourFinder.draw(10, ratio*imgW+10, imgW, ratio*imgW);
 		
 	}
 	
@@ -116,36 +117,36 @@ void ofApp::draw() {
 	reportStream << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
 	<< "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << endl
 	<< "set near threshold " << nearThreshold << " (press: + -)" << endl
-	<< "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
-	<< ", fps: " << ofGetFrameRate() << endl
+    << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs << endl
     << "connection is: " << kinect.isConnected() << endl;
 
-	ofDrawBitmapString(reportStream.str(), 20, 652);
-    
+    ofDrawBitmapString(reportStream.str(), 20, 700);
 }
 
 void ofApp::drawPointCloud() {
-	int w = 640;
-	int h = 480;
-	ofMesh mesh;
-	mesh.setMode(OF_PRIMITIVE_POINTS);
-	int step = 2;
-	for(int y = 0; y < h; y += step) {
-		for(int x = 0; x < w; x += step) {
-            //if(kinect.getDistanceAt(x, y) > 0) {
-            //	mesh.addColor(kinect.getColorAt(x,y));
-            //	mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
-            //}
-		}
-	}
-	glPointSize(3);
+    int w = kinect.getDepthPixels().getWidth();
+    int h = kinect.getDepthPixels().getHeight();
+    ofMesh mesh;
+    mesh.setMode(OF_PRIMITIVE_POINTS);
+    int step = 2;
+    for(int y = 0; y < h; y += step) {
+        for(int x = 0; x < w; x += step) {
+            //if(kinect.getDistanceAt(x, y) > 0)
+            {
+                if(kinect.getWorldCoordinateAt(x, y).z < 1.5f)
+                {
+                    mesh.addColor(kinect.getColorAt(x,y));
+                    //mesh.addColor(ofColor(255));
+                    mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
+                }
+            }
+        }
+    }
+    glPointSize(2);
 	ofPushMatrix();
 	// the projected points are 'upside down' and 'backwards' 
-	ofScale(1, -1, -1);
-	ofTranslate(0, 0, -1000); // center the points a bit
-	ofEnableDepthTest();
-	mesh.drawVertices();
-	ofDisableDepthTest();
+    ofScale(2000, -2000, -2000);
+    mesh.draw();
 	ofPopMatrix();
 }
 

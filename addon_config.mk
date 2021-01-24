@@ -19,13 +19,13 @@ meta:
 	ADDON_DESCRIPTION = Addon for interfacing with microsoft kinect2 cameras using open source drivers
 	ADDON_AUTHOR = Pierre Proske
 	ADDON_TAGS = "computer vision" "3D sensing" "kinect" "kinectv2" "libfreenect" "libfreenect2"
-	ADDON_URL = http://github.com/pierrep/ofxLibFreenect
+	ADDON_URL = https://github.com/pierrep/ofxLibFreenect2
 
 common:
 	# dependencies with other addons, a list of them separated by spaces 
 	# or use += in several lines
 	# ADDON_DEPENDENCIES =
-	ADDON_DEPENDENCIES = ofxOpenCv
+	ADDON_DEPENDENCIES = 
 	
 	# include search paths, this will be usually parsed from the file system
 	# but if the addon or addon libraries need special search paths they can be
@@ -67,14 +67,13 @@ common:
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    # ADDON_INCLUDES_EXCLUDE =
+        # ADDON_INCLUDES_EXCLUDE =
 	
 linux64:
 	# linux only, any library that should be included in the project using
 	# pkg-config
 	ADDON_PKG_CONFIG_LIBRARIES = libusb-1.0
-        ADDON_LDFLAGS = -lOpenCL -lturbojpeg -lva -lva-drm -ljpeg
-	#-lfreenect2
+    ADDON_LDFLAGS = -lOpenCL -lturbojpeg -lva -lva-drm -ljpeg
 
 	
 linux:

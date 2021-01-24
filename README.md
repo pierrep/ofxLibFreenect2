@@ -52,6 +52,9 @@ Under Ubuntu if you have an Intel iGPU you'll need to install the following pack
 
 ```
 sudo apt install beignet-dev
+```
+Otherwise you'll need these too:
+```
 sudo apt install libva-dev
 sudo apt install libturbojpeg0-dev 
 

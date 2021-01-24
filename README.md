@@ -30,7 +30,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
 ```
 You need to build the static library and install it system-wide:
 ```bash
-cmake -DBUILD_SHARED_LIBS=OFF
+cmake -DBUILD_SHARED_LIBS=OFF ..
 ```
 - Then copy the static library to the ofxLibFreenect addon directory:
 ```bash

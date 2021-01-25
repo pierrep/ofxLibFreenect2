@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxOpenCv.h"
 #include "ofxLibfreenect2.h"
+
 
 class ofApp : public ofBaseApp {
 public:
@@ -17,8 +19,19 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void mouseEntered(int x, int y);
 	void mouseExited(int x, int y);
-	void windowResized(int w, int h);    
+	void windowResized(int w, int h);
 	
     ofxLibfreenect2 kinect;
-
+	
+    ofxCvColorImage colorImg;
+    ofxCvGrayscaleImage grayImage; // grayscale depth image
+    ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
+    ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
+    ofxCvContourFinder contourFinder;
+	
+	bool bThreshWithOpenCV;
+	
+	int nearThreshold;
+	int farThreshold;
+	
 };

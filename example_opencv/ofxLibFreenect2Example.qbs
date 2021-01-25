@@ -19,6 +19,7 @@ Project{
 
         of.addons: [
             'ofxLibFreenect2',
+            'ofxOpenCv',
         ]
 
         // additional flags for the project. the of module sets some

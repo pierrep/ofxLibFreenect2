@@ -18,7 +18,8 @@ class ofxLibfreenect2 : public ofThread, public ofxBase3DVideo {
 
         bool init(bool infrared=false, bool video=true, bool texture=true);
         bool setup(int w, int h);
-        bool open();
+        bool open(int deviceIndex=-1);
+        bool open(string deviceSerial);
         void update();
         void close();
         void listDevices();
@@ -33,6 +34,9 @@ class ofxLibfreenect2 : public ofThread, public ofxBase3DVideo {
 
         ofPixels& getDepthPixels();
         const ofPixels& getDepthPixels() const;
+
+        ofPixels& getIrPixels();
+        const ofPixels& getIrPixels() const;
 
         /// get the calulated distance for a depth point
         float getDistanceAt(int x, int y) const;
@@ -109,12 +113,13 @@ class ofxLibfreenect2 : public ofThread, public ofxBase3DVideo {
 
         bool bNewBuffer;
         bool bNewFrame;
-        bool bGrabberInited;
+        bool bKinectInited;
         bool bIsConnected;
         bool bUseInfrared;
         bool bUseRGB;
         bool bUseTexture;
         bool bUseRegistration;
+        bool bClosing;
 
         ofTexture depthTex;
         ofTexture videoTex;
@@ -133,6 +138,6 @@ class ofxLibfreenect2 : public ofThread, public ofxBase3DVideo {
 		libfreenect2::SyncMultiFrameListener* listener = 0;
 		libfreenect2::FrameMap frames;
 
-		string serial;
+        string deviceSerial;
 
 };

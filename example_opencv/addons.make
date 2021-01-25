@@ -1,1 +1,2 @@
 ofxLibFreenect2
+ofxOpenCv

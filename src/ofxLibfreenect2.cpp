@@ -4,10 +4,11 @@
 ofxLibfreenect2::ofxLibfreenect2(){
     bNewFrame       = false;
     bNewBuffer      = false;
-    bGrabberInited  = false;
+    bKinectInited  = false;
     bIsConnected    = false;
     bUseTexture     = true;
     bUseRegistration = false;
+    bClosing = false;
     lastFrameNo     = -1;
 
     //set default distance range to 50cm - 600cm
@@ -38,7 +39,7 @@ bool ofxLibfreenect2::init(bool infrared, bool video, bool texture) {
 		return false;
 	}
 
-    bGrabberInited = false;
+    bKinectInited = false;
     bUseRGB = video;
     bUseInfrared = infrared;
     bUseTexture = texture;
@@ -46,15 +47,36 @@ bool ofxLibfreenect2::init(bool infrared, bool video, bool texture) {
 #ifdef TARGET_LINUX
     //This is a work around for iHD Intel drivers - see https://github.com/OpenKinect/libfreenect2/issues/1137
     if(strcmp("Intel",(const char*) glGetString(GL_VENDOR)) == 0) {
-        ofLogNotice() << "Intel GPU detected";
+        ofLogVerbose() << "Intel GPU detected";
         char driver_name[] = "LIBVA_DRIVER_NAME=i965";
         if (putenv(driver_name) != 0) {
             ofLogError() << "Failed to set correct environment variable for Intel Linux";
         } else {
-            ofLogNotice() << "set LIBVA_DRIVER_NAME=i965";
+            ofLogVerbose() << "set LIBVA_DRIVER_NAME=i965";
         }
     }
 #endif
+
+    if(ofGetLogLevel() == OF_LOG_VERBOSE) {
+        libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::Info);
+        libfreenect2::setGlobalLogger(logger);
+    }
+    else if(ofGetLogLevel() == OF_LOG_NOTICE) {
+        libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::Warning);
+        libfreenect2::setGlobalLogger(logger);
+    }
+    else if(ofGetLogLevel() == OF_LOG_WARNING) {
+        libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::Warning);
+        libfreenect2::setGlobalLogger(logger);
+    }
+    else if(ofGetLogLevel() == OF_LOG_ERROR) {
+        libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::Error);
+        libfreenect2::setGlobalLogger(logger);
+    }
+    else if(ofGetLogLevel() == OF_LOG_SILENT) {
+        libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::None);
+        libfreenect2::setGlobalLogger(logger);
+    }
 
     if(freenect2.enumerateDevices() == 0)
     {
@@ -66,18 +88,15 @@ bool ofxLibfreenect2::init(bool infrared, bool video, bool texture) {
         pipeline = new libfreenect2::OpenCLPacketPipeline();
 	}
 
-    libfreenect2::Logger* logger = libfreenect2::createConsoleLogger(libfreenect2::Logger::Level::Warning);
-    libfreenect2::setGlobalLogger(logger);
+    bKinectInited = true;
 
-	bGrabberInited = true;
-
-	return bGrabberInited;
+    return bKinectInited;
 }
 
 //--------------------------------------------------------------------------------
 bool ofxLibfreenect2::isInitialized() const
 {
-    return bGrabberInited;
+    return bKinectInited;
 }
 
 //---------------------------------------------------------------------------
@@ -92,21 +111,34 @@ bool ofxLibfreenect2::isConnected(int id)
 }
 
 //--------------------------------------------------------------------------------
-bool ofxLibfreenect2::open(){
+bool ofxLibfreenect2::open(int deviceIndex){
+    if(deviceIndex == -1) {
+        deviceSerial = freenect2.getDefaultDeviceSerialNumber();
+    } else {
+        deviceSerial = freenect2.getDeviceSerialNumber(deviceIndex);
+    }
+
+    bool bSuccess = open(deviceSerial);
+
+    return bSuccess;
+}
+
+//--------------------------------------------------------------------------------
+bool ofxLibfreenect2::open(string serial){
     close();
 
     bNewFrame  = false;
     bNewBuffer = false;
 
-    serial = freenect2.getDefaultDeviceSerialNumber();
+    deviceSerial = serial;
 
 	if(pipeline)
 	{
-		dev = freenect2.openDevice(serial, pipeline);
+        dev = freenect2.openDevice(deviceSerial, pipeline);
 	}
 	else
 	{
-		dev = freenect2.openDevice(serial);
+        dev = freenect2.openDevice(deviceSerial);
 	}
 
 	if(dev == 0)
@@ -138,27 +170,19 @@ void ofxLibfreenect2::listDevices() {
     int numDevices = freenect2.enumerateDevices();
 
 	if(numDevices == 0) {
-		ofLogNotice("ofxLibfreenect2") << "no devices found";
+        ofLogNotice("ofxLibfreenect2") << "No devices found";
 		return;
 	}
-	else if(numDevices == 1) {
-		ofLogNotice("ofxLibfreenect2") << 1 << " device found";
-	}
-	else {
-		ofLogNotice("ofxLibfreenect2") << numDevices <<" devices found";
-	}
-
+    else {
+        ofLogNotice() << "Devices Found: ";
+        for(int i = 0;i < numDevices; i++) {
+            ofLogNotice() << "Kinect2 index: " << i << " serial: " << freenect2.getDeviceSerialNumber(i);
+        }
+    }
 }
 
 //--------------------------------------------------------------------------------
 void ofxLibfreenect2::threadedFunction(){
-
-    //libfreenect2::SyncMultiFrameListener listener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
-    //libfreenect2::Frame registered(512, 424, 4);
-
-//    dev->setColorFrameListener(&listener);
-//    dev->setIrAndDepthFrameListener(&listener);
-//    dev->start();
 
     while(isThreadRunning()){
         listener->waitForNewFrame(frames);
@@ -224,8 +248,7 @@ void ofxLibfreenect2::threadedFunction(){
 
 //--------------------------------------------------------------------------------
 void ofxLibfreenect2::update(){
-    if(!bGrabberInited) return;
-    if(!isConnected()) return;
+    if(!bKinectInited || !isConnected() || bClosing) return;
 
     if( ofGetFrameNum() != (unsigned int) lastFrameNo ){
         bNewFrame = false;
@@ -378,9 +401,19 @@ const ofFloatPixels & ofxLibfreenect2::getDistancePixels() const{
 	return rawDepthPixels;
 }
 
+//--------------------------------------------------------------------------------
+ofPixels & ofxLibfreenect2::getIrPixels(){
+    return irPixels;
+}
+
+//--------------------------------------------------------------------------------
+const ofPixels & ofxLibfreenect2::getIrPixels() const{
+    return irPixels;
+}
+
 //------------------------------------
 float ofxLibfreenect2::getDistanceAt(int x, int y)  const{
-    return rawDepthPixels[y * width + x];
+    return getWorldCoordinateAt(x, y).z;
 }
 
 //------------------------------------
@@ -392,17 +425,20 @@ float ofxLibfreenect2::getDistanceAt(const ofPoint & p)  const{
 ofVec3f ofxLibfreenect2::getWorldCoordinateAt(int x, int y)  const{
     float wx, wy, wz;
 
+    if(!bKinectInited) {
+        ofLogError("ofxLibfreenect2::getWorldCoordinateAt") << "Kinect is not initialised";
+        return ofVec3f(0, 0, 0);
+    }
+
     if(bUseRegistration) {
         if (registration && undistorted)
         {
-            if (x < undistorted->width && y < undistorted->height)
+            if (x < undistorted->width && y < undistorted->height) {
                 registration->getPointXYZ(undistorted, y, x, wx, wy, wz);
-            else ofLogWarning("ofxLibfreenect2::getWorldCoordinateAt") << "Invalid coordinates...";
-
-        }
-        else {
-            ofLogError("ofxLibfreenect2::getWorldCoordinateAt") << "Kinect is not initialised";
-            return ofVec3f(0, 0, 0);
+            }
+            else {
+                ofLogWarning("ofxLibfreenect2::getWorldCoordinateAt") << "Invalid coordinates...";
+            }
         }
     } else {
         ofLogError("ofxLibfreenect2::getWorldCoordinateAt") << "Registration not enabled";
@@ -458,9 +494,11 @@ const ofTexture& ofxLibfreenect2::getDepthTexture() const{
 //--------------------------------------------------------------------------------
 void ofxLibfreenect2::close()
 {    
-
+    bClosing = true;
     if(bIsConnected) {
+        ofLogVerbose() << "Stopping Thread...";
 		stopThread();
+        ofLogVerbose() << "Waiting for thread to finish...";
         waitForThread(false);
     }
 
@@ -468,7 +506,7 @@ void ofxLibfreenect2::close()
     bNewBuffer      = false;
     bIsConnected    = false;
     lastFrameNo     = -1;
-
+    bClosing = false;
 }
 
 

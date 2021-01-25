@@ -2,22 +2,17 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-    //ofSetLogLevel(OF_LOG_VERBOSE);
 
-    kinect.listDevices();
-    kinect.init();                  // set up depth and RGB image streams
-    //kinect.open();                // opens first available kinect
-    kinect.open(0);                 // open a kinect by id, starting with 0
-    //kinect.open("041081740747");	// open a kinect using it's unique serial number
+    kinect.init(true); // shows infrared instead of RGB video image
+    kinect.open();	   // opens first available kinect
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    ofSetWindowTitle("FPS: "+ofToString(ofGetFrameRate()));
 	ofBackground(100, 100, 100);
 	
-    kinect.update();
+	kinect.update();
 }
 
 //--------------------------------------------------------------
@@ -25,34 +20,24 @@ void ofApp::draw() {
 
 	ofSetColor(255, 255, 255);
 	
-    // draw colour and depth images
-    float ratio = (float)kinect.height/(float)kinect.width;
-    int imgW = 450;
+    // draw from the live kinect
+    float ratio = (float)kinect.depthHeight/(float)kinect.depthWidth;
+    int imgW = 800;
 
-    kinect.drawDepth(10, 10, imgW, ratio*imgW);
-    kinect.draw(imgW+20, 10, imgW, ratio*imgW);
-    
-    ofDrawBitmapString("kinect connected: " +ofToString(kinect.isConnected()),20,ofGetHeight()-30);
+    kinect.draw(10, 10, imgW, ratio*imgW);
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::exit() {
 
 	kinect.close();
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed (int key) {
-    if(key == ' ') {
-        if(kinect.isInitialized()) {
-            if(kinect.isConnected()) {
-                ofLogNotice() << "Closing Kinect...";
-                kinect.close();
-            } else {
-                kinect.open();
-            }
-        }
-    }
+
 }
 
 //--------------------------------------------------------------

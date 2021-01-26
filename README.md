@@ -26,6 +26,11 @@ You'll need some dependencies installed to get this addon working, most importan
 
 More general info can be found here - https://github.com/OpenKinect/libfreenect2/blob/master/README.md#linux
 
+Before you can run a compiled application you'll need to install the Udev rules in order not to need to be root.
+
+The udev rules are here: https://github.com/OpenKinect/libfreenect2/blob/master/platform/linux/udev/90-kinect2.rules
+
+
 #### Ubuntu
 You can install clinfo to verify if you have correctly set up the OpenCL stack, i.e.
 
@@ -44,6 +49,12 @@ sudo apt install libva-dev
 sudo apt install libturbojpeg0-dev 
 
 ``` 
+Finally, copy the udev rules listed above to /etc/udev/rules.d
+You might need to run
+```
+sudo udevadm control --reload-rules
+```
+to reload the rules. Then (re)plug your kinect and you should be good to go.
 
 #### Arch
 
@@ -54,6 +65,11 @@ Otherwise you'll need these too:
 
 ```
 pacman -Sy ocl-icd opencl-headers libjpeg-turbo
+```
+
+The udev rules will need to be copied to:
+```
+/usr/lib/udev/rules.d/65-kinect2.rules
 ```
 
 

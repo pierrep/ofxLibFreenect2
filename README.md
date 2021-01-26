@@ -20,7 +20,7 @@ For an addon using Libfreenect2 and OpenNI, check out https://github.com/pierrep
 
 Dependencies
 ------------
-You'll need some dependencies installed to get this addon working, most importantly OpenCL. How to install these will depend on your platform.
+You'll need some dependencies installed to get this addon working, most importantly OpenCL. 
 
 ### Linux
 

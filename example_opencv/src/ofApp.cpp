@@ -2,16 +2,14 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-	ofSetLogLevel(OF_LOG_VERBOSE);
-    ofSetVerticalSync(false);
     
     kinect.init();	
 	kinect.open();		// opens first available kinect
 	
-    colorImg.allocate(kinect.depthWidth, kinect.depthHeight);
-    grayImage.allocate(kinect.depthWidth, kinect.depthHeight);
-    grayThreshNear.allocate(kinect.depthWidth, kinect.depthHeight);
-    grayThreshFar.allocate(kinect.depthWidth, kinect.depthHeight);
+    colorImg.allocate(kinect.getDepthWidth(), kinect.getDepthHeight());
+    grayImage.allocate(kinect.getDepthWidth(), kinect.getDepthHeight());
+    grayThreshNear.allocate(kinect.getDepthWidth(), kinect.getDepthHeight());
+    grayThreshFar.allocate(kinect.getDepthWidth(), kinect.getDepthHeight());
 	
 	nearThreshold = 230;
 	farThreshold = 70;
@@ -59,7 +57,7 @@ void ofApp::update() {
 		
         // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
         // also, find holes is set to true so we will get interior contours as well....
-        contourFinder.findContours(grayImage, 100, (kinect.depthWidth*kinect.depthHeight)/2, 20, false);
+        contourFinder.findContours(grayImage, 100, (kinect.getDepthWidth()*kinect.getDepthHeight())/2, 20, false);
 	}
 	
 }
@@ -70,7 +68,7 @@ void ofApp::draw() {
 	ofSetColor(255, 255, 255);	
 
     // draw from the live kinect
-    float ratio = (float)kinect.height/(float)kinect.width;
+    float ratio = (float)kinect.getHeight()/(float)kinect.getWidth();
     int imgW = 450;
 
     kinect.drawDepth(10, 10, imgW, ratio*imgW);

@@ -26,13 +26,18 @@ void ofApp::draw() {
 	ofSetColor(255, 255, 255);
 	
     // draw colour and depth images
-    float ratio = (float)kinect.height/(float)kinect.width;
+    float ratio = (float)kinect.getHeight()/(float)kinect.getWidth();
     int imgW = 450;
 
-    kinect.drawDepth(10, 10, imgW, ratio*imgW);
-    kinect.draw(imgW+20, 10, imgW, ratio*imgW);
+    kinect.draw(10, 10, imgW, ratio*imgW);
     
-    ofDrawBitmapString("kinect connected: " +ofToString(kinect.isConnected()),20,ofGetHeight()-30);
+    ratio = (float)kinect.getDepthHeight()/(float)kinect.getDepthWidth();
+    kinect.drawDepth(imgW+20, 10, imgW, ratio*imgW);
+    
+	ofDrawBitmapString("Colour image width: "+ofToString(kinect.getWidth())+" height: "+ofToString(kinect.getHeight()),10,ofGetHeight()-60);
+	ofDrawBitmapString("Depth image width: "+ofToString(kinect.getDepthWidth())+" height: "+ofToString(kinect.getDepthHeight()),10,ofGetHeight()-40);
+    string isOn = kinect.isConnected()?"yes":"no";
+    ofDrawBitmapString("kinect connected: " +isOn,10,ofGetHeight()-20);
 }
 
 //--------------------------------------------------------------

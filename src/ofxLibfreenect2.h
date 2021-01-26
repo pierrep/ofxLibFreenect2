@@ -83,14 +83,11 @@ class ofxLibfreenect2 : public ofThread, public ofxBase3DVideo {
 
         float getHeight() const;
         float getWidth() const;
-
+        float getDepthHeight() const;
+        float getDepthWidth() const;
+        
         ofParameter <float> minDistance;
         ofParameter <float> maxDistance;
-
-        const static int width = 1920;
-        const static int height = 1080;
-        const static int depthWidth = 512;
-        const static int depthHeight = 424;
 
     protected:
         void threadedFunction();

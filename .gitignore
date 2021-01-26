@@ -1,5 +1,8 @@
-example/.vs
-example/bin/example_debug
-example/build/
-ofxLibFreenect2Example.qbs.user
+*/.vs
+*/build/
+*.qbs.user
+*/bin/example*
+*/obj/
+*/bin/libfmodex.so
+build-*
 

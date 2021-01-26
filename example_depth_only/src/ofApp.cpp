@@ -24,8 +24,8 @@ void ofApp::draw() {
 	ofSetColor(255, 255, 255);
 	
     // draw depth image
-    float w = kinect.depthWidth;
-    float h = kinect.depthHeight;
+    float w = kinect.getDepthWidth();
+    float h = kinect.getDepthHeight();
     float ratio = h/w;
     int imgW = 800;
 

@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetVerticalSync(false);
 
     kinect.setRegistration(true); // enable depth->video image calibration

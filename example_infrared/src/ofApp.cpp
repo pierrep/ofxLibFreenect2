@@ -21,7 +21,7 @@ void ofApp::draw() {
 	ofSetColor(255, 255, 255);
 	
     // draw from the live kinect
-    float ratio = (float)kinect.depthHeight/(float)kinect.depthWidth;
+    float ratio = (float)kinect.getDepthHeight()/(float)kinect.getDepthWidth();
     int imgW = 800;
 
     kinect.draw(10, 10, imgW, ratio*imgW);

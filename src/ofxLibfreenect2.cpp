@@ -1,5 +1,10 @@
 #include "ofxLibfreenect2.h"
 
+        const static int width = 1920;
+        const static int height = 1080;
+        const static int depthWidth = 512;
+        const static int depthHeight = 424;
+        
 //--------------------------------------------------------------------------------
 ofxLibfreenect2::ofxLibfreenect2(){
     bNewFrame       = false;
@@ -369,6 +374,16 @@ float ofxLibfreenect2::getHeight() const{
 //---------------------------------------------------------------------------
 float ofxLibfreenect2::getWidth() const{
 	return (float) width;
+}
+
+//----------------------------------------------------------
+float ofxLibfreenect2::getDepthHeight() const{
+	return (float) depthHeight;
+}
+
+//---------------------------------------------------------------------------
+float ofxLibfreenect2::getDepthWidth() const{
+	return (float) depthWidth;
 }
 
 //--------------------------------------------------------------------------------

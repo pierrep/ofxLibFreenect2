@@ -26,7 +26,7 @@ You'll need some dependencies installed to get this addon working, most importan
 
 More general info can be found here - https://github.com/OpenKinect/libfreenect2/blob/master/README.md#linux
 
-## Ubuntu
+#### Ubuntu
 You can install clinfo to verify if you have correctly set up the OpenCL stack, i.e.
 
 ```
@@ -45,7 +45,7 @@ sudo apt install libturbojpeg0-dev
 
 ``` 
 
-## Arch
+#### Arch
 
 You'll need your GPU vendor OpenCL SDK. See here for more details: https://wiki.archlinux.org/index.php/GPGPU
 On NVidia, the Cuda package should install OpenCL, you may have it already installed.
